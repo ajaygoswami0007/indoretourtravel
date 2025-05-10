@@ -14,7 +14,6 @@ const navLinks = [
   { href: '/testimonials', label: 'Testimonials' },
   { href: '/about', label: 'About Us' },
   { href: '/contact', label: 'Contact' },
-  { href: '/faq', label: 'FAQ' },
 ];
 
 export default function Navbar() {
@@ -86,3 +85,4 @@ export default function Navbar() {
     </header>
   );
 }
+
