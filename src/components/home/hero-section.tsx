@@ -1,3 +1,4 @@
+
 "use client";
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,7 +30,7 @@ export default function HeroSection() {
           <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg rounded-lg shadow-lg transform hover:scale-105 transition-transform">
             <Link href="/booking">Book Your Ride</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary px-8 py-3 text-lg rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+          <Button asChild variant="outline" size="lg" className="border-white text-white bg-transparent hover:bg-white hover:text-primary px-8 py-3 text-lg rounded-lg shadow-lg transform hover:scale-105 transition-transform">
             <Link href="/services">Explore Services</Link>
           </Button>
         </div>
@@ -42,3 +43,4 @@ export default function HeroSection() {
     </section>
   );
 }
+
