@@ -20,6 +20,14 @@ const navLinks = [
 export default function Navbar() {
   const pathname = usePathname();
 
+  const getIsActive = (linkHref: string) => {
+    if (pathname === '/') {
+      return linkHref === '/';
+    }
+    // Original logic for non-home pages, or for more complex scenarios on home page if '/' isn't strictly matched
+    return (pathname === linkHref || (linkHref.includes('#') && pathname === linkHref.split('#')[0]));
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
@@ -35,7 +43,7 @@ export default function Navbar() {
               href={link.href}
               className={cn(
                 "text-sm font-medium transition-colors hover:text-primary",
-                (pathname === link.href || (link.href.includes('#') && pathname === link.href.split('#')[0])) 
+                getIsActive(link.href)
                 ? "text-primary" 
                 : "text-foreground/70"
               )}
@@ -71,7 +79,7 @@ export default function Navbar() {
                     href={link.href}
                     className={cn(
                       "text-lg font-medium transition-colors hover:text-primary",
-                      (pathname === link.href || (link.href.includes('#') && pathname === link.href.split('#')[0])) 
+                      getIsActive(link.href)
                       ? "text-primary" 
                       : "text-foreground/70"
                     )}
@@ -90,3 +98,4 @@ export default function Navbar() {
     </header>
   );
 }
+
