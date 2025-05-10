@@ -1,5 +1,7 @@
+
 import SectionTitle from '@/components/shared/section-title';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ClientRenderedDate from '@/components/shared/client-rendered-date';
 
 export default function PrivacyPolicyPage() {
   return (
@@ -11,7 +13,7 @@ export default function PrivacyPolicyPage() {
             <CardTitle>Our Commitment to Your Privacy</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-foreground/80 prose prose-lg">
-            <p>Last updated: {new Date().toLocaleDateString()}</p>
+            <p>Last updated: <ClientRenderedDate /></p>
             <p>TourEase ("us", "we", or "our") operates the TourEase website (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.</p>
             
             <h3 className="text-xl font-semibold text-primary pt-4">Information Collection and Use</h3>

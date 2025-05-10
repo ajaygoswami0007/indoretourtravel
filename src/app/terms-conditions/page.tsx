@@ -1,5 +1,7 @@
+
 import SectionTitle from '@/components/shared/section-title';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ClientRenderedDate from '@/components/shared/client-rendered-date';
 
 export default function TermsConditionsPage() {
   return (
@@ -11,7 +13,7 @@ export default function TermsConditionsPage() {
             <CardTitle>Agreement to Terms</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-foreground/80 prose prose-lg">
-            <p>Last updated: {new Date().toLocaleDateString()}</p>
+            <p>Last updated: <ClientRenderedDate /></p>
             <p>These Terms and Conditions ("Terms") govern your use of the TourEase website and services (collectively, the "Service") operated by TourEase ("us", "we", or "our"). Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.</p>
             
             <h3 className="text-xl font-semibold text-primary pt-4">Bookings and Payments</h3>

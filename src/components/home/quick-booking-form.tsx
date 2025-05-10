@@ -1,5 +1,6 @@
+
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +16,17 @@ export default function QuickBookingForm() {
   const router = useRouter();
   const [pickupLocation, setPickupLocation] = useState('');
   const [dropLocation, setDropLocation] = useState('');
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [minCalendarDate, setMinCalendarDate] = useState<Date | undefined>(undefined);
+
+  useEffect(() => {
+    const todayForSelection = new Date();
+    setDate(todayForSelection);
+    
+    const todayForMinDate = new Date();
+    todayForMinDate.setHours(0, 0, 0, 0); // Set to start of today
+    setMinCalendarDate(todayForMinDate); 
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,9 +79,12 @@ export default function QuickBookingForm() {
                         "w-full justify-start text-left font-normal bg-background",
                         !date && "text-muted-foreground"
                       )}
+                      disabled={!date} // Disable until date is loaded client-side
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
+                      {date ? format(date, "PPP") : 
+                        <span className="text-muted-foreground">Loading date...</span>
+                      }
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -79,6 +93,7 @@ export default function QuickBookingForm() {
                       selected={date}
                       onSelect={setDate}
                       initialFocus
+                      disabled={(d) => minCalendarDate ? d < minCalendarDate : true }
                     />
                   </PopoverContent>
                 </Popover>

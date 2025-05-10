@@ -1,5 +1,6 @@
+
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -13,8 +14,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import SectionTitle from '@/components/shared/section-title';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { CalendarIcon, Car, User, MapPin, Clock, Phone, Mail } from 'lucide-react';
+import { CalendarIcon, Car, User, MapPin, Clock, Phone, Mail, CheckCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from 'next/navigation';
 
 const bookingSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
@@ -46,6 +48,14 @@ const serviceTypes = [
 export default function BookingPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const { toast } = useToast();
+  const router = useRouter();
+  const [minPickupDate, setMinPickupDate] = useState<Date | undefined>(undefined);
+
+  useEffect(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of today for comparison
+    setMinPickupDate(today);
+  }, []);
 
   const { control, handleSubmit, trigger, formState: { errors } } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
@@ -68,7 +78,6 @@ export default function BookingPage() {
       description: "Your booking request has been received. We will contact you shortly.",
       variant: "default",
     });
-    // Reset form or redirect
     setCurrentStep(4); // Go to confirmation step
   };
 
@@ -146,7 +155,15 @@ export default function BookingPage() {
                               {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() -1))} /></PopoverContent>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar 
+                              mode="single" 
+                              selected={field.value} 
+                              onSelect={field.onChange} 
+                              initialFocus 
+                              disabled={(dateToCompare) => minPickupDate ? dateToCompare < minPickupDate : true }
+                            />
+                          </PopoverContent>
                         </Popover>
                       )}
                     />
@@ -229,8 +246,3 @@ export default function BookingPage() {
     </div>
   );
 }
-
-// Placeholder for CheckCircle icon if not imported above from lucide-react
-const CheckCircle = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-);
