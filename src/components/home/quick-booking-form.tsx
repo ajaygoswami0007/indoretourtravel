@@ -20,13 +20,13 @@ export default function QuickBookingForm() {
   const [minCalendarDate, setMinCalendarDate] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
-    const todayForSelection = new Date();
-    setDate(todayForSelection);
-    
-    const todayForMinDate = new Date();
-    todayForMinDate.setHours(0, 0, 0, 0); // Set to start of today
-    setMinCalendarDate(todayForMinDate); 
-  }, []);
+    const today = new Date();
+    setDate(today); // Set initial date for user display
+
+    const minDate = new Date();
+    minDate.setHours(0, 0, 0, 0); // Set to start of today for disabling past dates
+    setMinCalendarDate(minDate); 
+  }, []); // Empty dependency array: run once on mount
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,11 +79,10 @@ export default function QuickBookingForm() {
                         "w-full justify-start text-left font-normal bg-background",
                         !date && "text-muted-foreground"
                       )}
-                      disabled={!date} // Disable until date is loaded client-side
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {date ? format(date, "PPP") : 
-                        <span className="text-muted-foreground">Loading date...</span>
+                        <span>Pick a date</span> // Changed from "Loading date..."
                       }
                     </Button>
                   </PopoverTrigger>
@@ -93,7 +92,7 @@ export default function QuickBookingForm() {
                       selected={date}
                       onSelect={setDate}
                       initialFocus
-                      disabled={(d) => minCalendarDate ? d < minCalendarDate : true }
+                      disabled={(d) => minCalendarDate ? d < minCalendarDate : false } // Default to false if minCalendarDate is not set
                     />
                   </PopoverContent>
                 </Popover>
