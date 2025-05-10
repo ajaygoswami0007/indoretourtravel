@@ -11,6 +11,7 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
   { href: '/fleet', label: 'Fleet' },
+  { href: '/#tourist-places', label: 'Tourist Places' },
   { href: '/testimonials', label: 'Testimonials' },
   { href: '/about', label: 'About Us' },
   { href: '/contact', label: 'Contact' },
@@ -34,7 +35,9 @@ export default function Navbar() {
               href={link.href}
               className={cn(
                 "text-sm font-medium transition-colors hover:text-primary",
-                pathname === link.href ? "text-primary" : "text-foreground/70"
+                (pathname === link.href || (link.href.includes('#') && pathname === link.href.split('#')[0])) 
+                ? "text-primary" 
+                : "text-foreground/70"
               )}
             >
               {link.label}
@@ -68,7 +71,9 @@ export default function Navbar() {
                     href={link.href}
                     className={cn(
                       "text-lg font-medium transition-colors hover:text-primary",
-                      pathname === link.href ? "text-primary" : "text-foreground/70"
+                      (pathname === link.href || (link.href.includes('#') && pathname === link.href.split('#')[0])) 
+                      ? "text-primary" 
+                      : "text-foreground/70"
                     )}
                   >
                     {link.label}
@@ -85,4 +90,3 @@ export default function Navbar() {
     </header>
   );
 }
-
