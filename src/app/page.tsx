@@ -5,6 +5,7 @@ import QuickBookingForm from '@/components/home/quick-booking-form';
 import TestimonialsPreview from '@/components/home/testimonials-preview';
 import AffordableCarsSection from '@/components/home/affordable-cars-section';
 import TouristPlacesSection from '@/components/home/tourist-places-section';
+import StatsSection from '@/components/home/stats-section';
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
       <AffordableCarsSection />
       <TouristPlacesSection />
       <UspSection />
+      <StatsSection />
       <QuickBookingForm />
       <TestimonialsPreview />
     </>
