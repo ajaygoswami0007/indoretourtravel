@@ -76,7 +76,6 @@ function BookingPageContent() {
     today.setHours(0, 0, 0, 0); 
     setMinPickupDate(today);
     
-    // Pre-fill from query params
     const queryPickup = searchParams.get('pickupLocation');
     const queryDrop = searchParams.get('dropLocation');
     const queryDate = searchParams.get('pickupDate');
@@ -92,22 +91,20 @@ function BookingPageContent() {
     if (queryDate) {
       const dateFromQuery = new Date(queryDate);
       if (!isNaN(dateFromQuery.getTime())) {
-         // Check if date is not in the past
         if (dateFromQuery >= today) {
           setValue('pickupDate', dateFromQuery);
         } else {
-          setValue('pickupDate', today); // Default to today if query date is past
+          setValue('pickupDate', today); 
         }
       }
     } else {
-       setValue('pickupDate', today); // Default to today if no date in query
+       setValue('pickupDate', today); 
     }
 
     if (queryServiceType) {
         const matchedService = serviceTypes.find(st => st.id === queryServiceType);
         if (matchedService) setValue('serviceType', matchedService.id);
     } else if (queryDestination) {
-        // Attempt to set service type based on common tourist destinations
         if (queryDestination.toLowerCase().includes('ujjain') || queryDestination.toLowerCase().includes('omkareshwar') || queryDestination.toLowerCase().includes('bhopal')) {
             setValue('serviceType', 'outstation');
         }
@@ -119,7 +116,6 @@ function BookingPageContent() {
   const onSubmit = async (data: BookingFormData) => {
     setIsLoading(true);
     console.log('Booking Data for Indore Cab Service:', data);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsLoading(false);
     toast({
@@ -145,19 +141,21 @@ function BookingPageContent() {
     return (
       <div className="py-16 lg:py-24 bg-secondary">
         <div className="container mx-auto px-4 md:px-6">
-          <Card className="max-w-2xl mx-auto shadow-xl rounded-lg">
-            <CardHeader>
-              <CardTitle className="text-2xl text-primary">Indore Cab Booking Confirmation</CardTitle>
+          <Card className="max-w-3xl mx-auto shadow-xl rounded-lg">
+            <CardHeader className="p-8">
+              <CardTitle className="text-3xl text-primary">Indore Cab Booking Confirmation</CardTitle>
             </CardHeader>
-            <CardContent className="text-center space-y-4">
-              <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+            <CardContent className="text-center space-y-6 p-8 pt-0">
+              <CheckCircle className="h-20 w-20 text-green-500 mx-auto" />
               <h3 className="text-2xl font-semibold">Booking Confirmed!</h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-lg">
                 Thank you for choosing TourEase for your taxi service in Indore! Your booking request has been successfully submitted. Our team will review the details and contact you shortly to confirm your ride.
               </p>
-              <p className="text-sm">A confirmation email (if provided) and SMS will be sent to you with the Indore cab booking summary.</p>
-              <Button onClick={() => router.push('/')} variant="outline" className="w-full sm:w-auto">Back to Home</Button>
-              <Button onClick={() => setIsBookingConfirmed(false)} className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-2">Make Another Indore Taxi Booking</Button>
+              <p className="text-md">A confirmation email (if provided) and SMS will be sent to you with the Indore cab booking summary.</p>
+              <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+                <Button onClick={() => router.push('/')} variant="outline" className="w-full sm:w-auto text-lg py-3">Back to Home</Button>
+                <Button onClick={() => setIsBookingConfirmed(false)} className="w-full sm:w-auto text-lg py-3">Make Another Indore Taxi Booking</Button>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -168,18 +166,18 @@ function BookingPageContent() {
   return (
     <div className="py-16 lg:py-24 bg-secondary">
       <div className="container mx-auto px-4 md:px-6">
-        <SectionTitle title="Book Your Cab in Indore Online" subtitle="Complete your booking in one easy step for local taxi, outstation cabs (Indore to Ujjain, Bhopal, etc.), or airport taxi Indore." />
+        <SectionTitle title="Book Your Cab in Indore Online" subtitle="Complete your booking in one easy step for local taxi, outstation cabs (Indore to Ujjain, Bhopal, etc.), or airport taxi Indore." className="mb-12 md:mb-16" />
         
-        <Card className="max-w-2xl mx-auto shadow-xl rounded-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl text-primary">Enter Your Indore Cab Booking Details</CardTitle>
-            <CardDescription>Fill in the information below to secure your ride with the best taxi service in Indore.</CardDescription>
+        <Card className="max-w-3xl mx-auto shadow-xl rounded-lg">
+          <CardHeader className="p-8">
+            <CardTitle className="text-3xl text-primary">Enter Your Indore Cab Booking Details</CardTitle>
+            <CardDescription className="text-lg pt-1">Fill in the information below to secure your ride with the best taxi service in Indore.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardContent className="p-8 pt-0">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <Label htmlFor="serviceType">Service Type (e.g., Outstation Taxi from Indore, Airport Cab)</Label>
+                  <Label htmlFor="serviceType" className="mb-1.5 block">Service Type (e.g., Outstation Taxi from Indore, Airport Cab)</Label>
                   <Controller
                     name="serviceType"
                     control={control}
@@ -192,10 +190,10 @@ function BookingPageContent() {
                       </Select>
                     )}
                   />
-                  {errors.serviceType && <p className="text-destructive text-sm mt-1">{errors.serviceType.message}</p>}
+                  {errors.serviceType && <p className="text-destructive text-sm mt-1.5">{errors.serviceType.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="carType" className="flex items-center"><Car className="w-4 h-4 mr-2 text-muted-foreground" />Car Type (e.g., Sedan Cab Indore, SUV Taxi, Tempo Traveller)</Label>
+                  <Label htmlFor="carType" className="flex items-center mb-1.5"><Car className="w-4 h-4 mr-2 text-muted-foreground" />Car Type (e.g., Sedan Cab Indore, SUV Taxi, Tempo Traveller)</Label>
                   <Controller
                     name="carType"
                     control={control}
@@ -208,24 +206,24 @@ function BookingPageContent() {
                       </Select>
                     )}
                   />
-                  {errors.carType && <p className="text-destructive text-sm mt-1">{errors.carType.message}</p>}
+                  {errors.carType && <p className="text-destructive text-sm mt-1.5">{errors.carType.message}</p>}
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="pickupLocation" className="flex items-center"><MapPin className="w-4 h-4 mr-2 text-muted-foreground" />Pickup Location (e.g., Indore Airport, Your Address in Indore)</Label>
+                <Label htmlFor="pickupLocation" className="flex items-center mb-1.5"><MapPin className="w-4 h-4 mr-2 text-muted-foreground" />Pickup Location (e.g., Indore Airport, Your Address in Indore)</Label>
                 <Controller name="pickupLocation" control={control} render={({ field }) => <Input id="pickupLocation" {...field} placeholder="e.g., Indore Airport Terminal 1, Indore Railway Station" />} />
-                {errors.pickupLocation && <p className="text-destructive text-sm mt-1">{errors.pickupLocation.message}</p>}
+                {errors.pickupLocation && <p className="text-destructive text-sm mt-1.5">{errors.pickupLocation.message}</p>}
               </div>
               <div>
-                <Label htmlFor="dropLocation" className="flex items-center"><MapPin className="w-4 h-4 mr-2 text-muted-foreground" />Drop-off Location (e.g., Ujjain Mahakal, Bhopal Hotel)</Label>
+                <Label htmlFor="dropLocation" className="flex items-center mb-1.5"><MapPin className="w-4 h-4 mr-2 text-muted-foreground" />Drop-off Location (e.g., Ujjain Mahakal, Bhopal Hotel)</Label>
                 <Controller name="dropLocation" control={control} render={({ field }) => <Input id="dropLocation" {...field} placeholder="e.g., Ujjain Mahakaleshwar Temple, Omkareshwar" />} />
-                {errors.dropLocation && <p className="text-destructive text-sm mt-1">{errors.dropLocation.message}</p>}
+                {errors.dropLocation && <p className="text-destructive text-sm mt-1.5">{errors.dropLocation.message}</p>}
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <Label htmlFor="pickupDate" className="flex items-center"><CalendarIcon className="w-4 h-4 mr-2 text-muted-foreground" />Pickup Date</Label>
+                  <Label htmlFor="pickupDate" className="flex items-center mb-1.5"><CalendarIcon className="w-4 h-4 mr-2 text-muted-foreground" />Pickup Date</Label>
                   <Controller
                     name="pickupDate"
                     control={control}
@@ -249,34 +247,34 @@ function BookingPageContent() {
                       </Popover>
                     )}
                   />
-                  {errors.pickupDate && <p className="text-destructive text-sm mt-1">{errors.pickupDate.message}</p>}
+                  {errors.pickupDate && <p className="text-destructive text-sm mt-1.5">{errors.pickupDate.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="pickupTime" className="flex items-center"><Clock className="w-4 h-4 mr-2 text-muted-foreground" />Pickup Time</Label>
+                  <Label htmlFor="pickupTime" className="flex items-center mb-1.5"><Clock className="w-4 h-4 mr-2 text-muted-foreground" />Pickup Time</Label>
                   <Controller name="pickupTime" control={control} render={({ field }) => <Input id="pickupTime" type="time" {...field} />} />
-                  {errors.pickupTime && <p className="text-destructive text-sm mt-1">{errors.pickupTime.message}</p>}
+                  {errors.pickupTime && <p className="text-destructive text-sm mt-1.5">{errors.pickupTime.message}</p>}
                 </div>
               </div>
 
-              <CardTitle className="text-xl text-primary pt-4 border-t mt-6">Contact Information (For Indore Cab Booking)</CardTitle>
+              <CardTitle className="text-2xl text-primary pt-6 border-t mt-8">Contact Information (For Indore Cab Booking)</CardTitle>
               
               <div>
-                <Label htmlFor="name" className="flex items-center"><User className="w-4 h-4 mr-2 text-muted-foreground" />Full Name</Label>
+                <Label htmlFor="name" className="flex items-center mb-1.5"><User className="w-4 h-4 mr-2 text-muted-foreground" />Full Name</Label>
                 <Controller name="name" control={control} render={({ field }) => <Input id="name" {...field} placeholder="Your full name" />} />
-                {errors.name && <p className="text-destructive text-sm mt-1">{errors.name.message}</p>}
+                {errors.name && <p className="text-destructive text-sm mt-1.5">{errors.name.message}</p>}
               </div>
               <div>
-                <Label htmlFor="phone" className="flex items-center"><Phone className="w-4 h-4 mr-2 text-muted-foreground" />Phone Number (Indore Cab Driver Contact)</Label>
+                <Label htmlFor="phone" className="flex items-center mb-1.5"><Phone className="w-4 h-4 mr-2 text-muted-foreground" />Phone Number (Indore Cab Driver Contact)</Label>
                 <Controller name="phone" control={control} render={({ field }) => <Input id="phone" type="tel" {...field} placeholder="Your phone number for cab booking" />} />
-                {errors.phone && <p className="text-destructive text-sm mt-1">{errors.phone.message}</p>}
+                {errors.phone && <p className="text-destructive text-sm mt-1.5">{errors.phone.message}</p>}
               </div>
               <div>
-                <Label htmlFor="email" className="flex items-center"><Mail className="w-4 h-4 mr-2 text-muted-foreground" />Email Address (Optional)</Label>
+                <Label htmlFor="email" className="flex items-center mb-1.5"><Mail className="w-4 h-4 mr-2 text-muted-foreground" />Email Address (Optional)</Label>
                 <Controller name="email" control={control} render={({ field }) => <Input id="email" type="email" {...field} placeholder="Your email address for booking confirmation" />} />
-                {errors.email && <p className="text-destructive text-sm mt-1">{errors.email.message}</p>}
+                {errors.email && <p className="text-destructive text-sm mt-1.5">{errors.email.message}</p>}
               </div>
               
-              <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3.5" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? "Submitting Booking..." : "Submit Indore Cab Booking"}
               </Button>
@@ -290,8 +288,9 @@ function BookingPageContent() {
 
 export default function BookingPage() {
   return (
-    <Suspense fallback={<div>Loading booking form...</div>}>
+    <Suspense fallback={<div className="flex justify-center items-center h-screen"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <span className="ml-2">Loading booking form...</span></div>}>
       <BookingPageContent />
     </Suspense>
   );
 }
+
