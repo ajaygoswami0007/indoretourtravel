@@ -4,8 +4,6 @@
 import { z } from 'zod';
 
 // Define a Zod schema for booking data validation on the server.
-// It's good practice for server actions to validate incoming data.
-// Using z.coerce.date() for pickupDate to handle potential string-to-date conversion.
 const bookingActionSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
   pickupLocation: z.string().min(3, "Pickup location is required (e.g., Indore Airport, Indore Railway Station)"),
@@ -19,6 +17,39 @@ const bookingActionSchema = z.object({
 });
 
 export type BookingFormActionData = z.infer<typeof bookingActionSchema>;
+
+// Placeholder function for sending admin notification email
+async function sendAdminNotificationEmail(bookingData: BookingFormActionData) {
+  // In a real application, you would use an email library (e.g., Nodemailer, Resend, SendGrid)
+  // to send an email to the admin.
+  // Example (conceptual):
+  // const emailHtml = `<h1>New Cab Booking</h1><p>Details: ${JSON.stringify(bookingData, null, 2)}</p>`;
+  // await emailService.send({
+  //   to: 'admin@tourease-indore.com',
+  //   subject: `New Booking: ${bookingData.name} - ${bookingData.pickupLocation} to ${bookingData.dropLocation}`,
+  //   html: emailHtml,
+  // });
+  console.log(`[ADMIN EMAIL SIMULATION] Sending booking notification to admin for:`, bookingData);
+}
+
+// Placeholder function for sending user confirmation email
+async function sendUserConfirmationEmail(bookingData: BookingFormActionData) {
+  if (!bookingData.email) {
+    console.log('[USER EMAIL SIMULATION] No email provided, skipping user confirmation email.');
+    return;
+  }
+  // In a real application, you would use an email library
+  // to send a confirmation email to the user.
+  // Example (conceptual):
+  // const emailHtml = `<h1>Booking Confirmation</h1><p>Dear ${bookingData.name}, your booking is received. Details: ${JSON.stringify(bookingData, null, 2)}</p>`;
+  // await emailService.send({
+  //   to: bookingData.email,
+  //   subject: `TourEase Indore: Booking Confirmation - ${bookingData.pickupLocation} to ${bookingData.dropLocation}`,
+  //   html: emailHtml,
+  // });
+  console.log(`[USER EMAIL SIMULATION] Sending booking confirmation to user ${bookingData.email} for:`, bookingData);
+}
+
 
 export async function submitBooking(data: BookingFormActionData): Promise<{ success: boolean; serverMessage: string; bookingDetails?: string }> {
   try {
@@ -34,28 +65,33 @@ export async function submitBooking(data: BookingFormActionData): Promise<{ succ
     console.log('Server Action: Received Validated Booking Data:', validatedData);
 
     // Simulate processing, like saving to a database or sending notifications
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 500)); // Reduced delay for quicker simulation
 
-    // In a real application, you would:
-    // 1. Save `validatedData` to a database.
-    // 2. Send an email notification to the admin.
-    //    (e.g., using a service like Nodemailer, SendGrid, or Resend)
-    //    Example: await sendAdminNotificationEmail(validatedData);
-    // 3. Send a confirmation email to the user if email is provided.
-    //    Example: if (validatedData.email) await sendUserConfirmationEmail(validatedData);
-
-    // For now, the admin would be notified by checking these server logs.
-    // In a more complete system, we would add code here to send an email or update an admin dashboard.
+    // ** Email Notification Logic **
+    // 1. Send an email notification to the admin.
+    await sendAdminNotificationEmail(validatedData);
+    
+    // 2. Send a confirmation email to the user if email is provided.
+    await sendUserConfirmationEmail(validatedData);
     
     const bookingSummary = `Cab booking for ${validatedData.name} from ${validatedData.pickupLocation} to ${validatedData.dropLocation} on ${validatedData.pickupDate.toLocaleDateString()} at ${validatedData.pickupTime}.`;
+    
+    let serverMessage = 'Booking successfully processed. Admin will be notified.';
+    if (validatedData.email) {
+      serverMessage += ' You will receive a confirmation email shortly.';
+    }
+
+
     return { 
       success: true, 
-      serverMessage: 'Booking successfully processed on the server.',
+      serverMessage: serverMessage,
       bookingDetails: bookingSummary 
     };
 
   } catch (error) {
     console.error('Error in submitBooking server action:', error);
-    return { success: false, serverMessage: 'An unexpected error occurred while processing your booking on the server.' };
+    // Check if error is an instance of Error to safely access message property
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return { success: false, serverMessage: `An unexpected error occurred on the server: ${errorMessage}` };
   }
 }
