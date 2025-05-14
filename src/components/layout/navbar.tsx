@@ -6,19 +6,20 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Car } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/services', label: 'Services' },
-  { href: '/fleet', label: 'Fleet' },
-  { href: '/#tourist-places', label: 'Tourist Places' },
-  // { href: '/testimonials', label: 'Testimonials' }, // Removed from here
-  { href: '/about', label: 'About Us' },
-  { href: '/contact', label: 'Contact' },
-];
+import { useMemo } from 'react'; // Added for React.useMemo
 
 export default function Navbar() {
   const pathname = usePathname();
+
+  const navLinks = useMemo(() => [
+    { href: '/', label: 'Home' },
+    { href: '/services', label: 'Services' },
+    { href: '/fleet', label: 'Fleet' },
+    { href: '/#tourist-places', label: 'Tourist Places' },
+    // { href: '/testimonials', label: 'Testimonials' }, // Removed as per previous request
+    { href: '/about', label: 'About Us' },
+    { href: '/contact', label: 'Contact' },
+  ], []);
 
   const getIsActive = (linkHref: string) => {
     if (pathname === '/') {
