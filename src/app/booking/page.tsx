@@ -17,6 +17,7 @@ import { format } from 'date-fns';
 import { CalendarIcon, Car, User, MapPin, Clock, Phone, Mail, CheckCircle, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { submitBooking, type BookingFormActionData } from './actions'; // Import the server action
 
 const bookingSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
@@ -56,13 +57,15 @@ function BookingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [minPickupDate, setMinPickupDate] = useState<Date | undefined>(undefined);
+  const [confirmedBookingDetails, setConfirmedBookingDetails] = useState<string | undefined>(undefined);
 
   const { control, handleSubmit, formState: { errors }, reset, setValue } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
       serviceType: '',
-      pickupLocation: 'Indore', // Default to Indore
+      pickupLocation: 'Indore', 
       dropLocation: '',
+      pickupDate: new Date(), // Initialize with today's date
       pickupTime: '',
       carType: '',
       name: '',
@@ -75,6 +78,7 @@ function BookingPageContent() {
     const today = new Date();
     today.setHours(0, 0, 0, 0); 
     setMinPickupDate(today);
+    setValue('pickupDate', today, { shouldValidate: true, shouldDirty: true }); // Ensure default date is set and potentially validated
     
     const queryPickup = searchParams.get('pickupLocation');
     const queryDrop = searchParams.get('dropLocation');
@@ -82,23 +86,15 @@ function BookingPageContent() {
     const queryServiceType = searchParams.get('serviceType');
     const queryDestination = searchParams.get('destination');
 
-
     if (queryPickup) setValue('pickupLocation', queryPickup);
     if (queryDrop) setValue('dropLocation', queryDrop);
     if (queryDestination) setValue('dropLocation', queryDestination);
 
-
     if (queryDate) {
       const dateFromQuery = new Date(queryDate);
       if (!isNaN(dateFromQuery.getTime())) {
-        if (dateFromQuery >= today) {
-          setValue('pickupDate', dateFromQuery);
-        } else {
-          setValue('pickupDate', today); 
-        }
+        setValue('pickupDate', dateFromQuery >= today ? dateFromQuery : today);
       }
-    } else {
-       setValue('pickupDate', today); 
     }
 
     if (queryServiceType) {
@@ -109,52 +105,67 @@ function BookingPageContent() {
             setValue('serviceType', 'outstation');
         }
     }
-
-
   }, [searchParams, setValue]);
 
   const onSubmit = async (data: BookingFormData) => {
     setIsLoading(true);
-    console.log('Booking Data for Indore Cab Service:', data);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Data sent to server action should match BookingFormActionData (dates are fine as Date objects)
+    const actionData: BookingFormActionData = { ...data };
+
+    const result = await submitBooking(actionData);
     setIsLoading(false);
-    toast({
-      title: "Booking Submitted!",
-      description: `Your cab booking from ${data.pickupLocation} to ${data.dropLocation} has been received. We will contact you shortly to confirm your Indore taxi.`,
-      variant: "default",
-    });
-    setIsBookingConfirmed(true);
-    reset({ 
-        pickupLocation: 'Indore', 
-        pickupDate: new Date(),
-        serviceType: '',
-        dropLocation: '',
-        pickupTime: '',
-        carType: '',
-        name: '',
-        phone: '',
-        email: '',
-    }); 
+
+    if (result.success) {
+      toast({
+        title: "Booking Submitted!",
+        description: result.bookingDetails ? `${result.bookingDetails} We will contact you shortly.` : `Your cab booking has been received. We will contact you shortly. Server: ${result.serverMessage}`,
+        variant: "default",
+      });
+      setConfirmedBookingDetails(result.bookingDetails);
+      setIsBookingConfirmed(true);
+      reset({ 
+          pickupLocation: 'Indore', 
+          pickupDate: new Date(),
+          serviceType: '',
+          dropLocation: '',
+          pickupTime: '',
+          carType: '',
+          name: '',
+          phone: '',
+          email: '',
+      }); 
+    } else {
+      toast({
+        title: "Booking Failed",
+        description: result.serverMessage || "Could not process your booking. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isBookingConfirmed) {
     return (
       <div className="py-16 lg:py-24 bg-secondary">
         <div className="container mx-auto px-4 md:px-6">
-          <Card className="max-w-3xl mx-auto shadow-xl rounded-lg">
-            <CardHeader className="p-8">
-              <CardTitle className="text-3xl text-primary">Indore Cab Booking Confirmation</CardTitle>
+          <Card className="max-w-2xl mx-auto shadow-xl rounded-lg">
+            <CardHeader className="p-6 md:p-8">
+              <CardTitle className="text-2xl md:text-3xl text-primary">Indore Cab Booking Confirmation</CardTitle>
             </CardHeader>
-            <CardContent className="text-center space-y-6 p-8 pt-0">
-              <CheckCircle className="h-20 w-20 text-green-500 mx-auto" />
-              <h3 className="text-2xl font-semibold">Booking Confirmed!</h3>
-              <p className="text-muted-foreground text-lg">
-                Thank you for choosing TourEase for your taxi service in Indore! Your booking request has been successfully submitted. Our team will review the details and contact you shortly to confirm your ride.
+            <CardContent className="text-center space-y-6 p-6 md:p-8 pt-0">
+              <CheckCircle className="h-16 w-16 md:h-20 md:w-20 text-green-500 mx-auto" />
+              <h3 className="text-xl md:text-2xl font-semibold">Booking Confirmed!</h3>
+              <p className="text-muted-foreground text-md md:text-lg">
+                Thank you for choosing TourEase for your taxi service in Indore! 
+                {confirmedBookingDetails && <span className="block mt-2 font-medium">{confirmedBookingDetails}</span>}
               </p>
-              <p className="text-md">A confirmation email (if provided) and SMS will be sent to you with the Indore cab booking summary.</p>
+              <p className="text-sm md:text-md">
+                Your booking request has been successfully submitted. Our team will review the details and contact you shortly to confirm your ride.
+                A confirmation email (if provided) and SMS will be sent to you with the Indore cab booking summary.
+              </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-                <Button onClick={() => router.push('/')} variant="outline" className="w-full sm:w-auto text-lg py-3">Back to Home</Button>
-                <Button onClick={() => setIsBookingConfirmed(false)} className="w-full sm:w-auto text-lg py-3">Make Another Indore Taxi Booking</Button>
+                <Button onClick={() => router.push('/')} variant="outline" className="w-full sm:w-auto text-md md:text-lg py-2.5 md:py-3">Back to Home</Button>
+                <Button onClick={() => setIsBookingConfirmed(false)} className="w-full sm:w-auto text-md md:text-lg py-2.5 md:py-3">Make Another Indore Taxi Booking</Button>
               </div>
             </CardContent>
           </Card>
@@ -166,16 +177,16 @@ function BookingPageContent() {
   return (
     <div className="py-16 lg:py-24 bg-secondary">
       <div className="container mx-auto px-4 md:px-6">
-        <SectionTitle title="Book Your Cab in Indore Online" subtitle="Complete your booking in one easy step for local taxi, outstation cabs (Indore to Ujjain, Bhopal, etc.), or airport taxi Indore." className="mb-12 md:mb-16" />
+        <SectionTitle title="Book Your Cab in Indore Online" subtitle="Complete your booking in one easy step for local taxi, outstation cabs (Indore to Ujjain, Bhopal, etc.), or airport taxi Indore." className="mb-10 md:mb-12" />
         
-        <Card className="max-w-3xl mx-auto shadow-xl rounded-lg">
-          <CardHeader className="p-8">
-            <CardTitle className="text-3xl text-primary">Enter Your Indore Cab Booking Details</CardTitle>
-            <CardDescription className="text-lg pt-1">Fill in the information below to secure your ride with the best taxi service in Indore.</CardDescription>
+        <Card className="max-w-2xl mx-auto shadow-xl rounded-lg">
+          <CardHeader className="p-6 md:p-8">
+            <CardTitle className="text-2xl md:text-3xl text-primary">Enter Your Indore Cab Booking Details</CardTitle>
+            <CardDescription className="text-md md:text-lg pt-1">Fill in the information below to secure your ride with the best taxi service in Indore.</CardDescription>
           </CardHeader>
-          <CardContent className="p-8 pt-0">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <CardContent className="p-6 md:p-8 pt-0">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="serviceType" className="mb-1.5 block">Service Type (e.g., Outstation Taxi from Indore, Airport Cab)</Label>
                   <Controller
@@ -221,7 +232,7 @@ function BookingPageContent() {
                 {errors.dropLocation && <p className="text-destructive text-sm mt-1.5">{errors.dropLocation.message}</p>}
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="pickupDate" className="flex items-center mb-1.5"><CalendarIcon className="w-4 h-4 mr-2 text-muted-foreground" />Pickup Date</Label>
                   <Controller
@@ -256,7 +267,7 @@ function BookingPageContent() {
                 </div>
               </div>
 
-              <CardTitle className="text-2xl text-primary pt-6 border-t mt-8">Contact Information (For Indore Cab Booking)</CardTitle>
+              <CardTitle className="text-xl md:text-2xl text-primary pt-5 border-t mt-6">Contact Information (For Indore Cab Booking)</CardTitle>
               
               <div>
                 <Label htmlFor="name" className="flex items-center mb-1.5"><User className="w-4 h-4 mr-2 text-muted-foreground" />Full Name</Label>
@@ -274,7 +285,7 @@ function BookingPageContent() {
                 {errors.email && <p className="text-destructive text-sm mt-1.5">{errors.email.message}</p>}
               </div>
               
-              <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3.5" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? "Submitting Booking..." : "Submit Indore Cab Booking"}
               </Button>
@@ -288,9 +299,8 @@ function BookingPageContent() {
 
 export default function BookingPage() {
   return (
-    <Suspense fallback={<div className="flex justify-center items-center h-screen"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <span className="ml-2">Loading booking form...</span></div>}>
+    <Suspense fallback={<div className="flex justify-center items-center h-screen"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <span className="ml-2 text-lg">Loading booking form...</span></div>}>
       <BookingPageContent />
     </Suspense>
   );
 }
-
