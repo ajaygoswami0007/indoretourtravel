@@ -21,7 +21,7 @@ const carsData: CarInfo[] = [
   {
     id: '1',
     name: 'Suzuki Alto',
-    image: 'https://picsum.photos/300/200?random=alto',
+    image: '/images/home/affordable/alto.svg',
     imageHint: 'white hatchback small',
     baseRate: '₹2125 /Day',
     perKmRate: '₹8.5',
@@ -31,7 +31,7 @@ const carsData: CarInfo[] = [
   {
     id: '2',
     name: 'Suzuki WagonR',
-    image: 'https://picsum.photos/300/200?random=wagonr',
+    image: '/images/home/affordable/wagonr.svg',
     imageHint: 'silver hatchback tall',
     baseRate: '₹2250 /Day',
     perKmRate: '₹9.0',
@@ -41,7 +41,7 @@ const carsData: CarInfo[] = [
   {
     id: '3',
     name: 'Suzuki Swift',
-    image: 'https://picsum.photos/300/200?random=swift',
+    image: '/images/home/affordable/swift-hatchback.svg',
     imageHint: 'red hatchback sporty',
     baseRate: '₹2500 /Day',
     perKmRate: '₹10',
@@ -51,7 +51,7 @@ const carsData: CarInfo[] = [
   {
     id: '4',
     name: 'Tata Tigor',
-    image: 'https://picsum.photos/300/200?random=tigor',
+    image: '/images/home/affordable/tigor.svg',
     imageHint: 'blue sedan compact',
     baseRate: '₹2500 /Day',
     perKmRate: '₹10',

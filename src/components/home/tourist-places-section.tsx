@@ -18,7 +18,7 @@ const touristPlacesData: TouristPlace[] = [
   {
     id: '1',
     name: 'Mahakaleshwar Ujjain',
-    image: 'https://picsum.photos/400/300?random=ujjain',
+    image: '/images/home/tourist-places/ujjain.svg',
     imageHint: 'temple ancient',
     description: 'Bhopal To Ujjain Mahakal Temple Tour Package',
     startingPrice: '₹5000',
@@ -26,7 +26,7 @@ const touristPlacesData: TouristPlace[] = [
   {
     id: '2',
     name: 'Sanchi Stupa',
-    image: 'https://picsum.photos/400/300?random=sanchi',
+    image: '/images/home/tourist-places/sanchi.svg',
     imageHint: 'stupa historical',
     description: 'Bhopal To Sanchi Stupa Tour Package Starting',
     startingPrice: '₹2100',
@@ -34,7 +34,7 @@ const touristPlacesData: TouristPlace[] = [
   {
     id: '3',
     name: 'Omkareshwar Temple',
-    image: 'https://picsum.photos/400/300?random=omkareshwar',
+    image: '/images/home/tourist-places/omkareshwar.svg',
     imageHint: 'temple river',
     description: 'Bhopal To Omkareshwar Temple Tour Package',
     startingPrice: '₹6000',
@@ -42,7 +42,7 @@ const touristPlacesData: TouristPlace[] = [
   {
     id: '4',
     name: 'Kubreshwar Dham',
-    image: 'https://picsum.photos/400/300?random=kubreshwar',
+    image: '/images/home/tourist-places/kubreshwar.svg',
     imageHint: 'temple spiritual',
     description: 'Bhopal To Kubreshwar Dham Tour Package',
     startingPrice: '₹2100',
@@ -50,7 +50,7 @@ const touristPlacesData: TouristPlace[] = [
   {
     id: '5',
     name: 'Bhimbetka Caves',
-    image: 'https://picsum.photos/400/300?random=bhimbetka',
+    image: '/images/home/tourist-places/bhimbetka.svg',
     imageHint: 'caves rock',
     description: 'Bhopal To Bhimbetka Caves Tour Package',
     startingPrice: '₹2200',
@@ -58,7 +58,7 @@ const touristPlacesData: TouristPlace[] = [
   {
     id: '6',
     name: 'Maheshwar Temple',
-    image: 'https://picsum.photos/400/300?random=maheshwar',
+    image: '/images/home/tourist-places/maheshwar.svg',
     imageHint: 'temple fort',
     description: 'Bhopal To Maheshwar Temple Tour Package',
     startingPrice: '₹7000',

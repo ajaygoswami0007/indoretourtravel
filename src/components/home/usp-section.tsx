@@ -9,28 +9,28 @@ const usps = [
     icon: <CarFront className="h-10 w-10 text-primary mb-3" />,
     title: 'Clean & Well-Maintained Cabs',
     description: 'Our top priority is providing immaculate vehicles for a comfortable and hygienic ride.',
-    image: 'https://picsum.photos/400/300?random=clean-cab',
+    image: '/images/home/usp/clean-cab.svg',
     imageHint: 'clean car interior'
   },
   {
     icon: <Smile className="h-10 w-10 text-primary mb-3" />,
     title: 'Humble & Professional Drivers',
     description: 'Courteous, experienced, and verified drivers dedicated to your safety and satisfaction.',
-    image: 'https://picsum.photos/400/300?random=driver-smile',
+    image: '/images/home/usp/driver-smile.svg',
     imageHint: 'professional driver portrait'
   },
   {
     icon: <Clock className="h-10 w-10 text-primary mb-3" />,
     title: 'On-Time Service',
     description: 'We value your time. Expect punctuality and reliability for every booking.',
-    image: 'https://picsum.photos/400/300?random=on-time',
+    image: '/images/home/usp/on-time.svg',
     imageHint: 'watch time punctual'
   },
   {
     icon: <ShieldCheck className="h-10 w-10 text-primary mb-3" />,
     title: 'Customer-Centric Approach',
     description: 'Your needs are at the heart of our service. We offer 24x7 support for any assistance.',
-    image: 'https://picsum.photos/400/300?random=customer-support',
+    image: '/images/home/usp/customer-support.svg',
     imageHint: 'support help desk'
   },
 ];
@@ -67,4 +67,3 @@ export default function UspSection() {
     </section>
   );
 }
-

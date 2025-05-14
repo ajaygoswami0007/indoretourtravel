@@ -10,7 +10,7 @@ const mockTestimonials = [
   {
     id: '1',
     name: 'Sarah L.',
-    avatar: 'https://picsum.photos/id/237/50/50',
+    avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'SL',
     text: "TourEase made our outstation trip incredibly smooth. The cab was clean, and the driver was very professional. Highly recommended!",
     rating: 5,
@@ -19,7 +19,7 @@ const mockTestimonials = [
   {
     id: '2',
     name: 'John B.',
-    avatar: 'https://picsum.photos/id/238/50/50',
+    avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'JB',
     text: "Used their in-city service multiple times. Always on time, and the cars are in excellent condition. Great value for money.",
     rating: 5,
@@ -28,7 +28,7 @@ const mockTestimonials = [
   {
     id: '3',
     name: 'Priya K.',
-    avatar: 'https://picsum.photos/id/239/50/50',
+    avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'PK',
     text: "Rented a self-drive car for a weekend getaway. The process was seamless, and the car was perfect. Will definitely use TourEase again.",
     rating: 4,

@@ -109,9 +109,8 @@ export default function ContactPage() {
                 <CardTitle className="text-xl text-primary">Our Location</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                {/* Placeholder for Google Maps. Replace with actual map embed if needed */}
                 <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                   <Image src="https://picsum.photos/600/300?random=map" alt="Location Map" width={600} height={300} className="w-full h-full object-cover" data-ai-hint="city map location"/>
+                   <Image src="/images/contact/city-map-location.svg" alt="Location Map" width={600} height={300} className="w-full h-full object-cover" data-ai-hint="city map location"/>
                 </div>
               </CardContent>
             </Card>

@@ -8,7 +8,7 @@ export default function HeroSection() {
   return (
     <section className="relative h-[calc(100vh-4rem)] min-h-[500px] md:min-h-[600px] flex items-center justify-center text-center text-white">
       <Image
-        src="https://picsum.photos/1920/1080"
+        src="/images/home/hero/scenic-road-cab.svg"
         alt="Scenic travel route with a clean cab"
         layout="fill"
         objectFit="cover"
@@ -43,4 +43,3 @@ export default function HeroSection() {
     </section>
   );
 }
-

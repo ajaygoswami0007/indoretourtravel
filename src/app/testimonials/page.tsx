@@ -25,7 +25,7 @@ const initialTestimonials: Testimonial[] = [
   {
     id: '1',
     name: 'Aarav Sharma',
-    avatar: 'https://picsum.photos/id/1005/60/60',
+    avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'AS',
     text: "TourEase provided an excellent outstation service for my family trip. The cab was spotless, arrived on time, and the driver was incredibly professional and knew the routes well. Highly recommended!",
     location: 'Mumbai, India',
@@ -35,7 +35,7 @@ const initialTestimonials: Testimonial[] = [
   {
     id: '2',
     name: 'Priya Singh',
-    avatar: 'https://picsum.photos/id/1011/60/60',
+    avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'PS',
     text: "I frequently use TourEase for my in-city commutes. Their app is user-friendly, cabs are always clean, and drivers are courteous. It's my go-to cab service now.",
     location: 'Delhi, India',
@@ -45,7 +45,7 @@ const initialTestimonials: Testimonial[] = [
   {
     id: '3',
     name: 'Rohan Mehta',
-    avatar: 'https://picsum.photos/id/1012/60/60',
+    avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'RM',
     text: "Rented a self-drive car for a weekend trip. The car was in pristine condition, and the entire rental process was smooth and hassle-free. Great experience with TourEase!",
     location: 'Bangalore, India',
@@ -55,7 +55,7 @@ const initialTestimonials: Testimonial[] = [
   {
     id: '4',
     name: 'Ananya Reddy',
-    avatar: 'https://picsum.photos/id/1027/60/60',
+    avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'AR',
     text: "We booked a custom travel package for a pilgrimage tour. TourEase handled all transportation arrangements flawlessly. The driver was patient and very helpful throughout the journey.",
     location: 'Hyderabad, India',
@@ -65,7 +65,7 @@ const initialTestimonials: Testimonial[] = [
    {
     id: '5',
     name: 'Vikram Kumar',
-    avatar: 'https://picsum.photos/id/1035/60/60',
+    avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'VK',
     text: "Our company uses TourEase for corporate bookings. They are extremely reliable, provide excellent vehicles, and their customer support is top-notch. Makes business travel much easier.",
     location: 'Chennai, India',
@@ -75,7 +75,7 @@ const initialTestimonials: Testimonial[] = [
    {
     id: '6',
     name: 'Sneha Patel',
-    avatar: 'https://picsum.photos/id/1045/60/60',
+    avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'SP',
     text: "The cleanliness of the cab was a major plus point for me. The driver was also very polite and followed all safety guidelines. I felt very safe and comfortable during my ride.",
     location: 'Pune, India',

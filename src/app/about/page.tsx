@@ -21,7 +21,7 @@ export default function AboutUsPage() {
           </div>
           <div className="rounded-lg overflow-hidden shadow-xl">
             <Image
-              src="https://picsum.photos/600/400?random=1"
+              src="/images/about/team-journey.svg"
               alt="TourEase Team or Scenic View"
               width={600}
               height={400}
@@ -66,7 +66,7 @@ export default function AboutUsPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="rounded-lg overflow-hidden shadow-xl">
               <Image
-                src="https://picsum.photos/600/400?random=2"
+                src="/images/about/clean-car-interior.svg"
                 alt="Clean cab interior"
                 width={600}
                 height={400}

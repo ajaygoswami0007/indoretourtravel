@@ -12,7 +12,7 @@ const services = [
     title: 'Outstation Cabs',
     description: 'Book comfortable cabs for your inter-city or long-distance travel needs.',
     bookingLink: '/booking?serviceType=outstation',
-    image: 'https://picsum.photos/400/300?random=service-outstation',
+    image: '/images/home/services-overview/outstation.svg',
     imageHint: 'long road car'
   },
   {
@@ -20,7 +20,7 @@ const services = [
     title: 'In-City Cabs',
     description: 'Reliable on-demand cab service for hassle-free travel within the city.',
     bookingLink: '/booking?serviceType=in-city',
-    image: 'https://picsum.photos/400/300?random=service-incity',
+    image: '/images/home/services-overview/incity.svg',
     imageHint: 'city street taxi'
   },
   {
@@ -28,7 +28,7 @@ const services = [
     title: 'Self-Drive Cars',
     description: 'Rent a car and enjoy the freedom to drive yourself on your terms.',
     bookingLink: '/booking?serviceType=self-drive',
-    image: 'https://picsum.photos/400/300?random=service-selfdrive',
+    image: '/images/home/services-overview/selfdrive.svg',
     imageHint: 'car keys hand'
   },
   {
@@ -36,7 +36,7 @@ const services = [
     title: 'Custom Packages',
     description: 'Tailored travel packages for weekend getaways, pilgrimage, and group tours.',
     bookingLink: '/contact', // Custom packages might need a contact form
-    image: 'https://picsum.photos/400/300?random=service-custom',
+    image: '/images/home/services-overview/custom.svg',
     imageHint: 'happy tourists group'
   },
   {
@@ -44,7 +44,7 @@ const services = [
     title: 'Corporate Bookings',
     description: 'Dedicated and efficient cab solutions for all your business travel requirements.',
     bookingLink: '/contact', // Corporate bookings might need a contact form
-    image: 'https://picsum.photos/400/300?random=service-corporate',
+    image: '/images/home/services-overview/corporate.svg',
     imageHint: 'business person car'
   },
 ];
@@ -88,4 +88,3 @@ export default function ServicesOverview() {
     </section>
   );
 }
-

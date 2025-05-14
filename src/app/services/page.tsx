@@ -16,7 +16,7 @@ const servicesData = [
       'Transparent pricing',
       'Experienced drivers familiar with routes',
     ],
-    image: 'https://picsum.photos/500/300?random=outstation',
+    image: '/images/services/outstation-cab-journey.svg',
     imageHint: 'outstation cab journey'
   },
   {
@@ -29,7 +29,7 @@ const servicesData = [
       'Airport & Railway station transfers',
       'Quick and easy booking',
     ],
-    image: 'https://picsum.photos/500/300?random=incity',
+    image: '/images/services/city-cab-street.svg',
     imageHint: 'city cab street'
   },
   {
@@ -42,7 +42,7 @@ const servicesData = [
       'Well-maintained and insured vehicles',
       'Minimal documentation',
     ],
-    image: 'https://picsum.photos/500/300?random=selfdrive',
+    image: '/images/services/person-driving-car.svg',
     imageHint: 'person driving car'
   },
   {
@@ -55,7 +55,7 @@ const servicesData = [
       'Pilgrimage and tourist destination packages',
       'Dedicated tour coordinators (on request)',
     ],
-    image: 'https://picsum.photos/500/300?random=packages',
+    image: '/images/services/group-travel-happy.svg',
     imageHint: 'group travel happy'
   },
   {
@@ -68,7 +68,7 @@ const servicesData = [
       'Employee transport solutions',
       'Premium vehicles for executives',
     ],
-    image: 'https://picsum.photos/500/300?random=corporate',
+    image: '/images/services/business-travel-meeting.svg',
     imageHint: 'business travel meeting'
   },
 ];
