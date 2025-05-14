@@ -2,6 +2,7 @@
 'use server';
 
 import { z } from 'zod';
+import { Resend } from 'resend';
 
 // Define a Zod schema for booking data validation on the server.
 const bookingActionSchema = z.object({
@@ -18,36 +19,94 @@ const bookingActionSchema = z.object({
 
 export type BookingFormActionData = z.infer<typeof bookingActionSchema>;
 
-// Placeholder function for sending admin notification email
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const ADMIN_EMAIL = "ajaypurimnnit@gmail.com"; // Your admin email address
+const FROM_EMAIL = "onboarding@resend.dev"; // Use a Resend verified domain or their test email
+
+// Function to send admin notification email
 async function sendAdminNotificationEmail(bookingData: BookingFormActionData) {
-  // In a real application, you would use an email library (e.g., Nodemailer, Resend, SendGrid)
-  // to send an email to the admin.
-  // Example (conceptual):
-  // const emailHtml = `<h1>New Cab Booking</h1><p>Details: ${JSON.stringify(bookingData, null, 2)}</p>`;
-  // await emailService.send({
-  //   to: 'admin@tourease-indore.com',
-  //   subject: `New Booking: ${bookingData.name} - ${bookingData.pickupLocation} to ${bookingData.dropLocation}`,
-  //   html: emailHtml,
-  // });
-  console.log(`[ADMIN EMAIL SIMULATION] Sending booking notification to admin for:`, bookingData);
+  if (!resend) {
+    console.log('[ADMIN EMAIL SIMULATION - RESEND_API_KEY not set] Sending booking notification to admin for:', bookingData);
+    console.warn('Resend API key is not configured. Email will not be sent.');
+    return;
+  }
+
+  const subject = `New Cab Booking: ${bookingData.name} - ${bookingData.pickupLocation} to ${bookingData.dropLocation}`;
+  const emailHtml = `
+    <h1>New Cab Booking Received</h1>
+    <p><strong>Service Type:</strong> ${bookingData.serviceType}</p>
+    <p><strong>Pickup Location:</strong> ${bookingData.pickupLocation}</p>
+    <p><strong>Drop-off Location:</strong> ${bookingData.dropLocation}</p>
+    <p><strong>Pickup Date:</strong> ${bookingData.pickupDate.toLocaleDateString()}</p>
+    <p><strong>Pickup Time:</strong> ${bookingData.pickupTime}</p>
+    <p><strong>Car Type:</strong> ${bookingData.carType}</p>
+    <p><strong>Customer Name:</strong> ${bookingData.name}</p>
+    <p><strong>Customer Phone:</strong> ${bookingData.phone}</p>
+    <p><strong>Customer Email:</strong> ${bookingData.email || 'Not provided'}</p>
+  `;
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: ADMIN_EMAIL,
+      subject: subject,
+      html: emailHtml,
+    });
+
+    if (error) {
+      console.error('Error sending admin notification email:', error);
+      return;
+    }
+    console.log('Admin notification email sent successfully:', data);
+  } catch (e) {
+    console.error('Exception sending admin notification email:', e);
+  }
 }
 
-// Placeholder function for sending user confirmation email
+// Function to send user confirmation email
 async function sendUserConfirmationEmail(bookingData: BookingFormActionData) {
   if (!bookingData.email) {
     console.log('[USER EMAIL SIMULATION] No email provided, skipping user confirmation email.');
     return;
   }
-  // In a real application, you would use an email library
-  // to send a confirmation email to the user.
-  // Example (conceptual):
-  // const emailHtml = `<h1>Booking Confirmation</h1><p>Dear ${bookingData.name}, your booking is received. Details: ${JSON.stringify(bookingData, null, 2)}</p>`;
-  // await emailService.send({
-  //   to: bookingData.email,
-  //   subject: `TourEase Indore: Booking Confirmation - ${bookingData.pickupLocation} to ${bookingData.dropLocation}`,
-  //   html: emailHtml,
-  // });
-  console.log(`[USER EMAIL SIMULATION] Sending booking confirmation to user ${bookingData.email} for:`, bookingData);
+  if (!resend) {
+    console.log(`[USER EMAIL SIMULATION - RESEND_API_KEY not set] Sending booking confirmation to user ${bookingData.email} for:`, bookingData);
+    console.warn('Resend API key is not configured. User confirmation email will not be sent.');
+    return;
+  }
+
+  const subject = `TourEase Indore: Booking Confirmation - ${bookingData.pickupLocation} to ${bookingData.dropLocation}`;
+  const emailHtml = `
+    <h1>Your Booking with TourEase Indore is Received!</h1>
+    <p>Dear ${bookingData.name},</p>
+    <p>Thank you for booking with TourEase Indore. Your booking request has been received. Our team will contact you shortly to confirm the details.</p>
+    <h2>Booking Summary:</h2>
+    <p><strong>Service Type:</strong> ${bookingData.serviceType}</p>
+    <p><strong>Pickup Location:</strong> ${bookingData.pickupLocation}</p>
+    <p><strong>Drop-off Location:</strong> ${bookingData.dropLocation}</p>
+    <p><strong>Pickup Date:</strong> ${bookingData.pickupDate.toLocaleDateString()}</p>
+    <p><strong>Pickup Time:</strong> ${bookingData.pickupTime}</p>
+    <p><strong>Car Type:</strong> ${bookingData.carType}</p>
+    <p>If you have any questions, please contact us at support@tourease-indore.com or call our Indore Cab Contact: +91-XXX-XXXXXXX.</p>
+    <p>Sincerely,<br/>The TourEase Indore Team</p>
+  `;
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: bookingData.email,
+      subject: subject,
+      html: emailHtml,
+    });
+
+    if (error) {
+      console.error('Error sending user confirmation email:', error);
+      return;
+    }
+    console.log('User confirmation email sent successfully:', data);
+  } catch (e) {
+    console.error('Exception sending user confirmation email:', e);
+  }
 }
 
 
@@ -63,11 +122,8 @@ export async function submitBooking(data: BookingFormActionData): Promise<{ succ
     const validatedData = validationResult.data;
 
     console.log('Server Action: Received Validated Booking Data:', validatedData);
-
-    // Simulate processing, like saving to a database or sending notifications
-    await new Promise(resolve => setTimeout(resolve, 500)); // Reduced delay for quicker simulation
-
-    // ** Email Notification Logic **
+    
+    // Email Notification Logic
     // 1. Send an email notification to the admin.
     await sendAdminNotificationEmail(validatedData);
     
@@ -76,9 +132,12 @@ export async function submitBooking(data: BookingFormActionData): Promise<{ succ
     
     const bookingSummary = `Cab booking for ${validatedData.name} from ${validatedData.pickupLocation} to ${validatedData.dropLocation} on ${validatedData.pickupDate.toLocaleDateString()} at ${validatedData.pickupTime}.`;
     
-    let serverMessage = 'Booking successfully processed. Admin will be notified.';
+    let serverMessage = 'Booking successfully processed. Admin has been notified.';
     if (validatedData.email) {
       serverMessage += ' You will receive a confirmation email shortly.';
+    }
+    if (!resend) {
+        serverMessage += ' (Email sending is currently in simulation mode - API key not set).';
     }
 
 
@@ -90,8 +149,8 @@ export async function submitBooking(data: BookingFormActionData): Promise<{ succ
 
   } catch (error) {
     console.error('Error in submitBooking server action:', error);
-    // Check if error is an instance of Error to safely access message property
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return { success: false, serverMessage: `An unexpected error occurred on the server: ${errorMessage}` };
   }
 }
+
