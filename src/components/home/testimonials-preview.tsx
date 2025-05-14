@@ -12,27 +12,27 @@ const mockTestimonials = [
     name: 'Sarah L.',
     avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'SL',
-    text: "TourEase made our outstation trip incredibly smooth. The cab was clean, and the driver was very professional. Highly recommended!",
+    text: "TourEase made our Indore to Ujjain cab trip incredibly smooth. The cab was clean, and the driver was very professional. Highly recommended for outstation taxi from Indore!",
     rating: 5,
-    location: 'Mumbai, India'
+    location: 'Indore, India'
   },
   {
     id: '2',
     name: 'John B.',
     avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'JB',
-    text: "Used their in-city service multiple times. Always on time, and the cars are in excellent condition. Great value for money.",
+    text: "Used their local cab service in Indore multiple times. Always on time for airport pickup, and the cars are in excellent condition. Best taxi service in Indore.",
     rating: 5,
-    location: 'Delhi, India'
+    location: 'Indore Airport User'
   },
   {
     id: '3',
     name: 'Priya K.',
     avatar: '/images/testimonials/generic-avatar.svg',
     avatarFallback: 'PK',
-    text: "Rented a self-drive car for a weekend getaway. The process was seamless, and the car was perfect. Will definitely use TourEase again.",
+    text: "Rented a self-drive car in Indore for a weekend getaway to Omkareshwar. The process was seamless, and the car was perfect. Will definitely use TourEase again for taxi for Omkareshwar darshan.",
     rating: 4,
-    location: 'Bangalore, India'
+    location: 'Bhopal Traveler'
   },
 ];
 
@@ -48,13 +48,13 @@ export default function TestimonialsPreview() {
   return (
     <section className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4 md:px-6">
-        <SectionTitle title="What Our Customers Say" subtitle="Real feedback from happy travelers." />
+        <SectionTitle title="Happy Customers of Our Indore Cab Service" subtitle="Real feedback from travelers who used our taxi service in Indore, Ujjain, Bhopal and more." />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           {mockTestimonials.map((testimonial) => (
             <Card key={testimonial.id} className="flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg">
               <CardHeader className="flex flex-row items-center gap-4 pb-2">
                 <Avatar>
-                  <AvatarImage src={testimonial.avatar} alt={testimonial.name} data-ai-hint="customer avatar" />
+                  <AvatarImage src={testimonial.avatar} alt={`${testimonial.name} - TourEase Indore Customer`} data-ai-hint="Indore customer avatar" />
                   <AvatarFallback>{testimonial.avatarFallback}</AvatarFallback>
                 </Avatar>
                 <div>

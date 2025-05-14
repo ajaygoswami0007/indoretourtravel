@@ -1,6 +1,6 @@
 
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -16,15 +16,15 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon, Car, User, MapPin, Clock, Phone, Mail, CheckCircle, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const bookingSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
-  pickupLocation: z.string().min(3, "Pickup location is required"),
-  dropLocation: z.string().min(3, "Drop-off location is required"),
+  pickupLocation: z.string().min(3, "Pickup location is required (e.g., Indore Airport, Indore Railway Station)"),
+  dropLocation: z.string().min(3, "Drop-off location is required (e.g., Ujjain Mahakal Temple, Omkareshwar)"),
   pickupDate: z.date({ required_error: "Pickup date is required" }),
   pickupTime: z.string().min(1, "Pickup time is required"),
-  carType: z.string().min(1, "Car type is required"),
+  carType: z.string().min(1, "Car type is required (e.g., Sedan, SUV, Tempo Traveller)"),
   name: z.string().min(2, "Name is required"),
   phone: z.string().min(10, "Valid phone number is required").max(15),
   email: z.string().email("Invalid email address").optional().or(z.literal('')),
@@ -33,36 +33,35 @@ const bookingSchema = z.object({
 type BookingFormData = z.infer<typeof bookingSchema>;
 
 const carTypes = [
-  { id: 'sedan', name: 'Sedan (4 Seater)' },
-  { id: 'suv', name: 'SUV (6 Seater)' },
-  { id: 'hatchback', name: 'Hatchback (4 Seater)' },
-  { id: 'tempo', name: 'Tempo Traveller (12 Seater)' },
+  { id: 'sedan', name: 'Sedan Cab (4 Seater)' },
+  { id: 'suv', name: 'SUV Taxi (6-7 Seater)' },
+  { id: 'hatchback', name: 'Hatchback Cab (4 Seater)' },
+  { id: 'tempo_traveller_12', name: 'Tempo Traveller (12 Seater)' },
+  { id: 'tempo_traveller_17', name: 'Tempo Traveller (17 Seater)' },
+  { id: 'luxury', name: 'Luxury Cab (e.g. Honda City)' },
 ];
 
 const serviceTypes = [
-  { id: 'outstation', name: 'Outstation Cabs' },
-  { id: 'in-city', name: 'In-City Cabs' },
-  { id: 'self-drive', name: 'Self-Drive Cars' },
+  { id: 'outstation', name: 'Outstation Cabs from Indore (e.g., Indore to Ujjain, Bhopal)' },
+  { id: 'in-city', name: 'In-City Cabs Indore (Local Taxi)' },
+  { id: 'airport', name: 'Indore Airport Taxi (Pickup/Drop)' },
+  { id: 'self-drive', name: 'Self-Drive Car Rental Indore' },
+  { id: 'tourist_package', name: 'Tourist Cab Packages (e.g. Omkareshwar Darshan)'}
 ];
 
-export default function BookingPage() {
+function BookingPageContent() {
   const [isBookingConfirmed, setIsBookingConfirmed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [minPickupDate, setMinPickupDate] = useState<Date | undefined>(undefined);
 
-  useEffect(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); 
-    setMinPickupDate(today);
-  }, []);
-
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<BookingFormData>({
+  const { control, handleSubmit, formState: { errors }, reset, setValue } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
       serviceType: '',
-      pickupLocation: '',
+      pickupLocation: 'Indore', // Default to Indore
       dropLocation: '',
       pickupTime: '',
       carType: '',
@@ -72,19 +71,74 @@ export default function BookingPage() {
     }
   });
 
+  useEffect(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
+    setMinPickupDate(today);
+    
+    // Pre-fill from query params
+    const queryPickup = searchParams.get('pickupLocation');
+    const queryDrop = searchParams.get('dropLocation');
+    const queryDate = searchParams.get('pickupDate');
+    const queryServiceType = searchParams.get('serviceType');
+    const queryDestination = searchParams.get('destination');
+
+
+    if (queryPickup) setValue('pickupLocation', queryPickup);
+    if (queryDrop) setValue('dropLocation', queryDrop);
+    if (queryDestination) setValue('dropLocation', queryDestination);
+
+
+    if (queryDate) {
+      const dateFromQuery = new Date(queryDate);
+      if (!isNaN(dateFromQuery.getTime())) {
+         // Check if date is not in the past
+        if (dateFromQuery >= today) {
+          setValue('pickupDate', dateFromQuery);
+        } else {
+          setValue('pickupDate', today); // Default to today if query date is past
+        }
+      }
+    } else {
+       setValue('pickupDate', today); // Default to today if no date in query
+    }
+
+    if (queryServiceType) {
+        const matchedService = serviceTypes.find(st => st.id === queryServiceType);
+        if (matchedService) setValue('serviceType', matchedService.id);
+    } else if (queryDestination) {
+        // Attempt to set service type based on common tourist destinations
+        if (queryDestination.toLowerCase().includes('ujjain') || queryDestination.toLowerCase().includes('omkareshwar') || queryDestination.toLowerCase().includes('bhopal')) {
+            setValue('serviceType', 'outstation');
+        }
+    }
+
+
+  }, [searchParams, setValue]);
+
   const onSubmit = async (data: BookingFormData) => {
     setIsLoading(true);
-    console.log('Booking Data:', data);
+    console.log('Booking Data for Indore Cab Service:', data);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsLoading(false);
     toast({
       title: "Booking Submitted!",
-      description: "Your booking request has been received. We will contact you shortly.",
+      description: `Your cab booking from ${data.pickupLocation} to ${data.dropLocation} has been received. We will contact you shortly to confirm your Indore taxi.`,
       variant: "default",
     });
     setIsBookingConfirmed(true);
-    reset(); 
+    reset({ 
+        pickupLocation: 'Indore', 
+        pickupDate: new Date(),
+        serviceType: '',
+        dropLocation: '',
+        pickupTime: '',
+        carType: '',
+        name: '',
+        phone: '',
+        email: '',
+    }); 
   };
 
   if (isBookingConfirmed) {
@@ -93,17 +147,17 @@ export default function BookingPage() {
         <div className="container mx-auto px-4 md:px-6">
           <Card className="max-w-2xl mx-auto shadow-xl rounded-lg">
             <CardHeader>
-              <CardTitle className="text-2xl text-primary">Booking Confirmation</CardTitle>
+              <CardTitle className="text-2xl text-primary">Indore Cab Booking Confirmation</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
               <h3 className="text-2xl font-semibold">Booking Confirmed!</h3>
               <p className="text-muted-foreground">
-                Thank you for choosing TourEase! Your booking request has been successfully submitted. Our team will review the details and contact you shortly to confirm your ride.
+                Thank you for choosing TourEase for your taxi service in Indore! Your booking request has been successfully submitted. Our team will review the details and contact you shortly to confirm your ride.
               </p>
-              <p className="text-sm">A confirmation email (if provided) and SMS will be sent to you with the booking summary.</p>
+              <p className="text-sm">A confirmation email (if provided) and SMS will be sent to you with the Indore cab booking summary.</p>
               <Button onClick={() => router.push('/')} variant="outline" className="w-full sm:w-auto">Back to Home</Button>
-              <Button onClick={() => setIsBookingConfirmed(false)} className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-2">Make Another Booking</Button>
+              <Button onClick={() => setIsBookingConfirmed(false)} className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-2">Make Another Indore Taxi Booking</Button>
             </CardContent>
           </Card>
         </div>
@@ -114,23 +168,23 @@ export default function BookingPage() {
   return (
     <div className="py-16 lg:py-24 bg-secondary">
       <div className="container mx-auto px-4 md:px-6">
-        <SectionTitle title="Book Your Cab" subtitle="Complete your booking in one easy step" />
+        <SectionTitle title="Book Your Cab in Indore Online" subtitle="Complete your booking in one easy step for local taxi, outstation cabs (Indore to Ujjain, Bhopal, etc.), or airport taxi Indore." />
         
         <Card className="max-w-2xl mx-auto shadow-xl rounded-lg">
           <CardHeader>
-            <CardTitle className="text-2xl text-primary">Enter Your Booking Details</CardTitle>
-            <CardDescription>Fill in the information below to secure your ride.</CardDescription>
+            <CardTitle className="text-2xl text-primary">Enter Your Indore Cab Booking Details</CardTitle>
+            <CardDescription>Fill in the information below to secure your ride with the best taxi service in Indore.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="serviceType">Service Type</Label>
+                  <Label htmlFor="serviceType">Service Type (e.g., Outstation Taxi from Indore, Airport Cab)</Label>
                   <Controller
                     name="serviceType"
                     control={control}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                         <SelectTrigger id="serviceType"><SelectValue placeholder="Select service type" /></SelectTrigger>
                         <SelectContent>
                           {serviceTypes.map(type => <SelectItem key={type.id} value={type.id}>{type.name}</SelectItem>)}
@@ -141,12 +195,12 @@ export default function BookingPage() {
                   {errors.serviceType && <p className="text-destructive text-sm mt-1">{errors.serviceType.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="carType" className="flex items-center"><Car className="w-4 h-4 mr-2 text-muted-foreground" />Car Type</Label>
+                  <Label htmlFor="carType" className="flex items-center"><Car className="w-4 h-4 mr-2 text-muted-foreground" />Car Type (e.g., Sedan Cab Indore, SUV Taxi, Tempo Traveller)</Label>
                   <Controller
                     name="carType"
                     control={control}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                         <SelectTrigger id="carType"><SelectValue placeholder="Select car type" /></SelectTrigger>
                         <SelectContent>
                           {carTypes.map(car => <SelectItem key={car.id} value={car.id}>{car.name}</SelectItem>)}
@@ -159,13 +213,13 @@ export default function BookingPage() {
               </div>
 
               <div>
-                <Label htmlFor="pickupLocation" className="flex items-center"><MapPin className="w-4 h-4 mr-2 text-muted-foreground" />Pickup Location</Label>
-                <Controller name="pickupLocation" control={control} render={({ field }) => <Input id="pickupLocation" {...field} placeholder="e.g., Airport Terminal 1" />} />
+                <Label htmlFor="pickupLocation" className="flex items-center"><MapPin className="w-4 h-4 mr-2 text-muted-foreground" />Pickup Location (e.g., Indore Airport, Your Address in Indore)</Label>
+                <Controller name="pickupLocation" control={control} render={({ field }) => <Input id="pickupLocation" {...field} placeholder="e.g., Indore Airport Terminal 1, Indore Railway Station" />} />
                 {errors.pickupLocation && <p className="text-destructive text-sm mt-1">{errors.pickupLocation.message}</p>}
               </div>
               <div>
-                <Label htmlFor="dropLocation" className="flex items-center"><MapPin className="w-4 h-4 mr-2 text-muted-foreground" />Drop-off Location</Label>
-                <Controller name="dropLocation" control={control} render={({ field }) => <Input id="dropLocation" {...field} placeholder="e.g., City Center Hotel" />} />
+                <Label htmlFor="dropLocation" className="flex items-center"><MapPin className="w-4 h-4 mr-2 text-muted-foreground" />Drop-off Location (e.g., Ujjain Mahakal, Bhopal Hotel)</Label>
+                <Controller name="dropLocation" control={control} render={({ field }) => <Input id="dropLocation" {...field} placeholder="e.g., Ujjain Mahakaleshwar Temple, Omkareshwar" />} />
                 {errors.dropLocation && <p className="text-destructive text-sm mt-1">{errors.dropLocation.message}</p>}
               </div>
               
@@ -204,7 +258,7 @@ export default function BookingPage() {
                 </div>
               </div>
 
-              <CardTitle className="text-xl text-primary pt-4 border-t mt-6">Contact Information</CardTitle>
+              <CardTitle className="text-xl text-primary pt-4 border-t mt-6">Contact Information (For Indore Cab Booking)</CardTitle>
               
               <div>
                 <Label htmlFor="name" className="flex items-center"><User className="w-4 h-4 mr-2 text-muted-foreground" />Full Name</Label>
@@ -212,19 +266,19 @@ export default function BookingPage() {
                 {errors.name && <p className="text-destructive text-sm mt-1">{errors.name.message}</p>}
               </div>
               <div>
-                <Label htmlFor="phone" className="flex items-center"><Phone className="w-4 h-4 mr-2 text-muted-foreground" />Phone Number</Label>
-                <Controller name="phone" control={control} render={({ field }) => <Input id="phone" type="tel" {...field} placeholder="Your phone number" />} />
+                <Label htmlFor="phone" className="flex items-center"><Phone className="w-4 h-4 mr-2 text-muted-foreground" />Phone Number (Indore Cab Driver Contact)</Label>
+                <Controller name="phone" control={control} render={({ field }) => <Input id="phone" type="tel" {...field} placeholder="Your phone number for cab booking" />} />
                 {errors.phone && <p className="text-destructive text-sm mt-1">{errors.phone.message}</p>}
               </div>
               <div>
                 <Label htmlFor="email" className="flex items-center"><Mail className="w-4 h-4 mr-2 text-muted-foreground" />Email Address (Optional)</Label>
-                <Controller name="email" control={control} render={({ field }) => <Input id="email" type="email" {...field} placeholder="Your email address" />} />
+                <Controller name="email" control={control} render={({ field }) => <Input id="email" type="email" {...field} placeholder="Your email address for booking confirmation" />} />
                 {errors.email && <p className="text-destructive text-sm mt-1">{errors.email.message}</p>}
               </div>
               
               <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Submitting..." : "Submit Booking"}
+                {isLoading ? "Submitting Booking..." : "Submit Indore Cab Booking"}
               </Button>
             </form>
           </CardContent>
@@ -234,3 +288,10 @@ export default function BookingPage() {
   );
 }
 
+export default function BookingPage() {
+  return (
+    <Suspense fallback={<div>Loading booking form...</div>}>
+      <BookingPageContent />
+    </Suspense>
+  );
+}

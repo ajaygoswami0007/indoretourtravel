@@ -21,18 +21,22 @@ export default function QuickBookingForm() {
 
   useEffect(() => {
     const today = new Date();
-    setDate(today); // Set initial date for user display
+    setDate(today); 
 
     const minDate = new Date();
-    minDate.setHours(0, 0, 0, 0); // Set to start of today for disabling past dates
+    minDate.setHours(0, 0, 0, 0); 
     setMinCalendarDate(minDate); 
-  }, []); // Empty dependency array: run once on mount
+  }, []); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // For a real app, you'd pass this data to the booking page
-    // e.g., router.push(`/booking?pickup=${pickupLocation}&drop=${dropLocation}&date=${date?.toISOString()}`);
-    router.push('/booking'); 
+    
+    const params = new URLSearchParams();
+    if (pickupLocation) params.append('pickupLocation', pickupLocation);
+    if (dropLocation) params.append('dropLocation', dropLocation);
+    if (date) params.append('pickupDate', date.toISOString().split('T')[0]); // Format as YYYY-MM-DD
+
+    router.push(`/booking?${params.toString()}`); 
   };
 
   return (
@@ -40,17 +44,17 @@ export default function QuickBookingForm() {
       <div className="container mx-auto px-4 md:px-6">
         <Card className="max-w-2xl mx-auto shadow-xl rounded-lg">
           <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold text-primary">Book Your Ride Now</CardTitle>
-            <CardDescription>Fast, easy, and reliable cab booking.</CardDescription>
+            <CardTitle className="text-3xl font-bold text-primary">Quick Cab Booking in Indore</CardTitle>
+            <CardDescription>Book your local cab, airport taxi, or outstation trip from Indore. Fast, easy, and reliable taxi booking.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="pickup" className="flex items-center mb-1"><MapPin className="w-4 h-4 mr-2 text-primary" />Pickup Location</Label>
+                <Label htmlFor="pickup" className="flex items-center mb-1"><MapPin className="w-4 h-4 mr-2 text-primary" />Pickup Location (e.g., Indore Airport)</Label>
                 <Input 
                   id="pickup" 
                   type="text" 
-                  placeholder="Enter pickup location" 
+                  placeholder="Enter pickup location in Indore" 
                   value={pickupLocation}
                   onChange={(e) => setPickupLocation(e.target.value)}
                   required 
@@ -58,7 +62,7 @@ export default function QuickBookingForm() {
                 />
               </div>
               <div>
-                <Label htmlFor="drop" className="flex items-center mb-1"><MapPin className="w-4 h-4 mr-2 text-primary" />Drop-off Location</Label>
+                <Label htmlFor="drop" className="flex items-center mb-1"><MapPin className="w-4 h-4 mr-2 text-primary" />Drop-off Location (e.g., Ujjain)</Label>
                 <Input 
                   id="drop" 
                   type="text" 
@@ -82,7 +86,7 @@ export default function QuickBookingForm() {
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {date ? format(date, "PPP") : 
-                        <span>Pick a date</span> // Changed from "Loading date..."
+                        <span>Pick a date</span>
                       }
                     </Button>
                   </PopoverTrigger>
@@ -92,13 +96,13 @@ export default function QuickBookingForm() {
                       selected={date}
                       onSelect={setDate}
                       initialFocus
-                      disabled={(d) => minCalendarDate ? d < minCalendarDate : false } // Default to false if minCalendarDate is not set
+                      disabled={(d) => minCalendarDate ? d < minCalendarDate : false }
                     />
                   </PopoverContent>
                 </Popover>
               </div>
               <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3 rounded-md shadow-md transform hover:scale-105 transition-transform">
-                Find Cabs
+                Find Cabs in Indore
               </Button>
             </form>
           </CardContent>

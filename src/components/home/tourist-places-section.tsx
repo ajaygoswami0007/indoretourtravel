@@ -10,6 +10,7 @@ interface TouristPlace {
   name: string;
   image: string;
   imageHint: string;
+  altText: string;
   description: string;
   startingPrice: string;
 }
@@ -19,49 +20,55 @@ const touristPlacesData: TouristPlace[] = [
     id: '1',
     name: 'Mahakaleshwar Ujjain',
     image: '/images/home/tourist-places/ujjain.svg',
-    imageHint: 'temple ancient',
-    description: 'Bhopal To Ujjain Mahakal Temple Tour Package',
-    startingPrice: '₹5000',
+    imageHint: 'Ujjain Mahakal taxi',
+    altText: 'Mahakaleshwar Temple Ujjain - Book cab from Indore',
+    description: 'Book Indore to Ujjain cab for Mahakaleshwar Temple darshan. Reliable taxi service.',
+    startingPrice: '₹1500',
   },
   {
     id: '2',
-    name: 'Sanchi Stupa',
-    image: '/images/home/tourist-places/sanchi.svg',
-    imageHint: 'stupa historical',
-    description: 'Bhopal To Sanchi Stupa Tour Package Starting',
-    startingPrice: '₹2100',
+    name: 'Omkareshwar Temple',
+    image: '/images/home/tourist-places/omkareshwar.svg',
+    imageHint: 'Omkareshwar taxi Indore',
+    altText: 'Omkareshwar Temple - Taxi from Indore for darshan',
+    description: 'Affordable Indore to Omkareshwar taxi package. Comfortable journey guaranteed.',
+    startingPrice: '₹2500',
   },
   {
     id: '3',
-    name: 'Omkareshwar Temple',
-    image: '/images/home/tourist-places/omkareshwar.svg',
-    imageHint: 'temple river',
-    description: 'Bhopal To Omkareshwar Temple Tour Package',
-    startingPrice: '₹6000',
+    name: 'Bhopal City Tour',
+    image: '/images/home/tourist-places/bhopal-lake.svg', // Assuming you create this image
+    imageHint: 'Bhopal taxi tour',
+    altText: 'Bhopal city tour by taxi from Indore',
+    description: 'Explore Bhopal with our Indore to Bhopal taxi service. Round trip and one-way cabs.',
+    startingPrice: '₹3000',
   },
   {
     id: '4',
-    name: 'Kubreshwar Dham',
-    image: '/images/home/tourist-places/kubreshwar.svg',
-    imageHint: 'temple spiritual',
-    description: 'Bhopal To Kubreshwar Dham Tour Package',
-    startingPrice: '₹2100',
+    name: 'Dewas Tekri',
+    image: '/images/home/tourist-places/dewas-tekri.svg', // Assuming you create this image
+    imageHint: 'Dewas cab Indore',
+    altText: 'Cab service from Indore to Dewas Tekri',
+    description: 'Plan your visit to Dewas with our comfortable Indore to Dewas cab booking.',
+    startingPrice: '₹1200',
   },
   {
     id: '5',
-    name: 'Bhimbetka Caves',
-    image: '/images/home/tourist-places/bhimbetka.svg',
-    imageHint: 'caves rock',
-    description: 'Bhopal To Bhimbetka Caves Tour Package',
-    startingPrice: '₹2200',
+    name: 'Mandu (Mandavgad)',
+    image: '/images/home/tourist-places/mandu.svg', // Assuming you create this image
+    imageHint: 'Mandu taxi Indore',
+    altText: 'Taxi from Indore to Mandu for sightseeing',
+    description: 'Discover the historical city of Mandu with our outstation taxi from Indore.',
+    startingPrice: '₹2800',
   },
   {
     id: '6',
-    name: 'Maheshwar Temple',
-    image: '/images/home/tourist-places/maheshwar.svg',
-    imageHint: 'temple fort',
-    description: 'Bhopal To Maheshwar Temple Tour Package',
-    startingPrice: '₹7000',
+    name: 'Sanchi Stupa',
+    image: '/images/home/tourist-places/sanchi.svg',
+    imageHint: 'Sanchi Stupa taxi',
+    altText: 'Sanchi Stupa - Historical site taxi tour from Indore',
+    description: 'Indore to Sanchi Stupa tour package by cab. Explore Buddhist heritage.',
+    startingPrice: '₹2100',
   },
 ];
 
@@ -70,8 +77,8 @@ export default function TouristPlacesSection() {
     <section id="tourist-places" className="py-16 lg:py-24 bg-secondary">
       <div className="container mx-auto px-4 md:px-6">
         <SectionTitle 
-          title="Enjoy Comfortable Rides And Guidance" 
-          subtitle="Explore popular tourist destinations with our tailored packages." 
+          title="Indore Taxi for Tourist Places: Ujjain, Omkareshwar & More" 
+          subtitle="Explore popular tourist destinations like Mahakaleshwar Ujjain, Omkareshwar, Bhopal, and Dewas with our tailored cab packages from Indore." 
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           {touristPlacesData.map((place) => (
@@ -79,7 +86,7 @@ export default function TouristPlacesSection() {
               <div className="relative h-56 w-full">
                 <Image
                   src={place.image}
-                  alt={place.name}
+                  alt={place.altText}
                   layout="fill"
                   objectFit="cover"
                   data-ai-hint={place.imageHint}
@@ -94,8 +101,8 @@ export default function TouristPlacesSection() {
               </CardContent>
               <CardFooter className="p-4">
                 <Button asChild className="w-full bg-accent hover:bg-accent/90 text-accent-foreground rounded-md">
-                  <Link href="/booking">
-                    Book Now <ArrowRight className="ml-2 h-4 w-4" />
+                  <Link href={`/booking?destination=${encodeURIComponent(place.name)}`}>
+                    Book Taxi Now <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
               </CardFooter>
