@@ -12,7 +12,7 @@ const navLinks = [
   { href: '/services', label: 'Services' },
   { href: '/fleet', label: 'Fleet' },
   { href: '/#tourist-places', label: 'Tourist Places' },
-  { href: '/testimonials', label: 'Testimonials' },
+  // { href: '/testimonials', label: 'Testimonials' }, // Removed from here
   { href: '/about', label: 'About Us' },
   { href: '/contact', label: 'Contact' },
 ];
@@ -22,10 +22,17 @@ export default function Navbar() {
 
   const getIsActive = (linkHref: string) => {
     if (pathname === '/') {
+      // For homepage, only '/' should be active.
+      // For links with #, it should be active if the path matches the part before # AND it's the homepage.
+      if (linkHref.includes('#')) {
+        return pathname === linkHref.split('#')[0] && linkHref.startsWith('/#');
+      }
       return linkHref === '/';
     }
-    // Original logic for non-home pages, or for more complex scenarios on home page if '/' isn't strictly matched
-    return (pathname === linkHref || (linkHref.includes('#') && pathname === linkHref.split('#')[0]));
+    // For other pages, ensure it's not a hash link intended for the homepage
+    if (linkHref.startsWith('/#')) return false;
+
+    return (pathname === linkHref || pathname.startsWith(linkHref + '/'));
   };
 
   return (
@@ -98,4 +105,3 @@ export default function Navbar() {
     </header>
   );
 }
-
